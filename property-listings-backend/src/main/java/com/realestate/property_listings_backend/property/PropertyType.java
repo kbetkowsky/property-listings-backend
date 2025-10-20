@@ -1,4 +1,6 @@
 package com.realestate.property_listings_backend.property;
 
-public class PropertyType {
+public enum PropertyType {
+    SALE,
+    RENT
 }
