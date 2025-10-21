@@ -1,4 +1,6 @@
 package com.realestate.property_listings_backend.property;
 
-public class PropertyRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PropertyRepository extends JpaRepository<Property, Long> {
 }
