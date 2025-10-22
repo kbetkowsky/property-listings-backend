@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -53,7 +54,7 @@ public class Property {
     private User owner;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PropertyImage> images;
+    private List<PropertyImage> images = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
