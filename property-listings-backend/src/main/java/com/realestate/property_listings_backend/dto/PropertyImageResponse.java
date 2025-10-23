@@ -3,9 +3,10 @@ package com.realestate.property_listings_backend.dto;
 import lombok.Data;
 
 @Data
-public class PropertyImageRequest {
+public class PropertyImageResponse {
+    private Long id;
     private String imageUrl;
-    private Integer displayOrder;
     private String originalFileName;
     private String contentType;
+    private Integer displayOrder;
 }

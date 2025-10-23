@@ -1,5 +1,8 @@
 package com.realestate.property_listings_backend.property;
 
+import com.realestate.property_listings_backend.dto.CreatePropertyRequest;
+import com.realestate.property_listings_backend.dto.PropertyResponse;
+import com.realestate.property_listings_backend.mapper.PropertyMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +53,12 @@ public class PropertyService {
         } else {
             return false;
         }
+    }
+
+    @Transactional
+    public PropertyResponse createProperty(CreatePropertyRequest request) {
+        var property = PropertyMapper.mapToEntity(request);
+        propertyRepository.save(property);
+        return PropertyMapper.mapToResponse(property);
     }
 }

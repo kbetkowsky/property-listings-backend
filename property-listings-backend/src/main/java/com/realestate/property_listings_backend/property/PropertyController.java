@@ -1,5 +1,8 @@
 package com.realestate.property_listings_backend.property;
 
+import com.realestate.property_listings_backend.dto.CreatePropertyRequest;
+import com.realestate.property_listings_backend.dto.PropertyResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +31,9 @@ public class PropertyController {
     }
 
     @PostMapping
-    public ResponseEntity<Property> createProperty(@PathVariable Long id, @RequestBody Property property) {
-        Property created = propertyService.createProperty(property);
-        return ResponseEntity.status(201).body(created);
+    public ResponseEntity<PropertyResponse> createProperty(@Valid @RequestBody CreatePropertyRequest request) {
+        PropertyResponse response = propertyService.createProperty(request);
+        return ResponseEntity.status(201).body(response);
     }
 
     @PutMapping("/{id}")
