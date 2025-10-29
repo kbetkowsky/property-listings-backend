@@ -22,8 +22,11 @@ public class PropertyImage {
     private String imageUrl;
 
     //Pod S3
+    private String path;
     private String originalFileName;
     private String contentType;
+    private Long sizeBytes;
+    private String originalUrl;
 
     private Integer displayOrder;
 
