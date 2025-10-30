@@ -2,9 +2,11 @@ package com.realestate.property_listings_backend.config;
 
 import com.realestate.property_listings_backend.dto.ErrorResponse;
 import com.realestate.property_listings_backend.dto.ValidationErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -133,7 +135,36 @@ public class GlobalExceptionHandler {
         
         return ResponseEntity.internalServerError().body(errorResponse);
     }
-    
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleJsonParsingError(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request
+    ) {
+        log.error("Błąd parsowania JSON: ", ex);
+
+        String userMessage = "Nieprawidłowy format danych";
+
+        // Konkretne błędy
+        String exceptionMessage = ex.getMessage();
+        if (exceptionMessage.contains("out of range of int")) {
+            userMessage = "Podana liczba jest za duża. Maksymalnie: 2,147,483,647";
+        } else if (exceptionMessage.contains("not one of the values accepted for Enum")) {
+            userMessage = "Nieprawidłowa wartość dla typu nieruchomości";
+        }
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(400)  // ← Kluczowe: 400 zamiast 500!
+                .error("Bad Request")
+                .message(userMessage)
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(400).body(error);
+    }
+
+
     private String getPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
     }
