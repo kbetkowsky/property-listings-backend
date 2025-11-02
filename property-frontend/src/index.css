@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f8fafc;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-primary-700 px-8 py-4 rounded-2xl font-medium border border-gray-200 transition-all duration-300 hover:shadow-lg;
+  }
+  
+  .glass-card {
+    @apply bg-white bg-opacity-10 border border-white border-opacity-20 rounded-3xl shadow-2xl;
+    backdrop-filter: blur(20px);
+  }
+  
+  .property-card {
+    @apply bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden;
+  }
+  
+  .insight-card {
+    @apply bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100;
+  }
+  
+  .tummim-dot {
+    @apply w-2 h-2 bg-white rounded-full;
+  }
+  
+  .tummim-heading {
+    @apply font-extralight tracking-tight leading-none;
+  }
+  
+  .tummim-subheading {
+    @apply font-light tracking-wide;
+  }
+  
+  .tummim-body {
+    @apply font-normal leading-relaxed;
+  }
+  
+  .tag-pill {
+    @apply px-3 py-1 rounded-full text-xs font-medium;
+  }
+  
+  .tag-primary {
+    @apply bg-primary-100 text-primary-700;
+  }
+  
+  .tag-secondary {
+    @apply bg-secondary-100 text-secondary-700;
+  }
+  
+  .tag-accent {
+    @apply bg-accent-100 text-accent-700;
+  }
+}
+
+/* TUMMIM GRADIENTS */
+.ocean-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #0891b2 100%);
+}
+
+.tummim-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 30%, #0891b2 70%, #059669 100%);
+}
+
+.tummim-button {
+  background: linear-gradient(90deg, #059669 0%, #0891b2 100%);
+}
+
+.tummim-card {
+  background: linear-gradient(145deg, #1e40af 0%, #059669 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #1e40af, #0891b2, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ANIMATIONS */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(30, 64, 175, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 60px rgba(8, 145, 178, 0.5);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
