@@ -11,64 +11,161 @@
     background: #f8fafc;
     scroll-behavior: smooth;
   }
+  
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer components {
+  /* Enhanced Button Styles */
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-primary-500/25;
   }
   
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-primary-700 px-8 py-4 rounded-2xl font-medium border border-gray-200 transition-all duration-300 hover:shadow-lg;
+    @apply bg-white hover:bg-gray-50 text-primary-700 px-8 py-4 rounded-2xl font-medium border border-gray-200 transition-all duration-300 hover:shadow-lg hover:border-primary-300;
   }
   
+  /* Enhanced Glass Card */
   .glass-card {
     @apply bg-white bg-opacity-10 border border-white border-opacity-20 rounded-3xl shadow-2xl;
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
   
+  /* Enhanced Property Card */
   .property-card {
-    @apply bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden;
+    @apply bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:scale-[1.02];
   }
   
+  /* Enhanced Insight Card */
   .insight-card {
-    @apply bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100;
+    @apply bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-200;
   }
   
+  /* Tummim Typography */
   .tummim-dot {
     @apply w-2 h-2 bg-white rounded-full;
   }
   
   .tummim-heading {
     @apply font-extralight tracking-tight leading-none;
+    letter-spacing: -0.025em;
   }
   
   .tummim-subheading {
     @apply font-light tracking-wide;
+    letter-spacing: 0.025em;
   }
   
   .tummim-body {
     @apply font-normal leading-relaxed;
+    line-height: 1.75;
   }
   
+  /* Enhanced Tag Pills */
   .tag-pill {
-    @apply px-3 py-1 rounded-full text-xs font-medium;
+    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-300;
   }
   
   .tag-primary {
-    @apply bg-primary-100 text-primary-700;
+    @apply bg-primary-100 text-primary-700 hover:bg-primary-200;
   }
   
   .tag-secondary {
-    @apply bg-secondary-100 text-secondary-700;
+    @apply bg-secondary-100 text-secondary-700 hover:bg-secondary-200;
   }
   
   .tag-accent {
-    @apply bg-accent-100 text-accent-700;
+    @apply bg-accent-100 text-accent-700 hover:bg-accent-200;
+  }
+  
+  /* Mega Navigation Styles */
+  .mega-nav-dropdown {
+    @apply absolute top-full left-1/2 transform -translate-x-1/2 pt-4 opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible;
+  }
+  
+  .mega-nav-content {
+    @apply bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 min-w-[600px];
+    backdrop-filter: blur(20px);
+  }
+  
+  /* Filter Bar Styles */
+  .filter-dropdown {
+    @apply absolute top-full left-0 mt-2 min-w-full bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50 opacity-0 invisible transition-all duration-300;
+  }
+  
+  .filter-dropdown.active {
+    @apply opacity-100 visible;
+  }
+  
+  .filter-option {
+    @apply w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-gray-700;
+  }
+  
+  .filter-option.selected {
+    @apply text-primary-600 bg-primary-50;
+  }
+  
+  /* Property Detail Styles */
+  .property-hero {
+    @apply relative h-screen overflow-hidden;
+  }
+  
+  .property-hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent;
+  }
+  
+  .property-navigation {
+    @apply absolute top-8 left-8;
+  }
+  
+  .property-actions {
+    @apply absolute top-8 right-8 flex space-x-4;
+  }
+  
+  .property-info-overlay {
+    @apply absolute bottom-12 left-12 text-white max-w-2xl;
+  }
+  
+  .property-gallery-nav {
+    @apply absolute bottom-8 right-8 flex space-x-2;
+  }
+  
+  /* Enhanced Hover Effects */
+  .hover-lift {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-2xl hover:shadow-primary-500/25;
+  }
+  
+  /* Loading States */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-b-2 border-primary-500;
+  }
+  
+  .loading-pulse {
+    @apply absolute inset-0 animate-ping rounded-full border border-accent-300 opacity-20;
+  }
+  
+  /* Form Enhancements */
+  .form-input {
+    @apply w-full px-6 py-4 bg-gray-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all font-light placeholder-gray-400;
+  }
+  
+  .form-select {
+    @apply w-full px-6 py-4 bg-gray-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all font-light;
+  }
+  
+  .form-textarea {
+    @apply w-full px-6 py-4 bg-gray-50 border-0 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all font-light placeholder-gray-400 resize-none;
   }
 }
 
-/* TUMMIM GRADIENTS */
+/* ENHANCED TUMMIM GRADIENTS */
 .ocean-gradient {
   background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #0891b2 100%);
 }
@@ -92,18 +189,75 @@
   background-clip: text;
 }
 
-/* ANIMATIONS */
+/* ENHANCED ANIMATIONS */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-30px); }
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% { 
+    transform: translateY(-20px) rotate(1deg);
+  }
+  66% { 
+    transform: translateY(-10px) rotate(-1deg);
+  }
 }
 
 @keyframes pulse-glow {
   0%, 100% { 
-    box-shadow: 0 0 30px rgba(30, 64, 175, 0.3);
+    box-shadow: 0 0 30px rgba(30, 64, 175, 0.3), 0 0 60px rgba(30, 64, 175, 0.1);
+    transform: scale(1);
   }
   50% { 
-    box-shadow: 0 0 60px rgba(8, 145, 178, 0.5);
+    box-shadow: 0 0 50px rgba(8, 145, 178, 0.5), 0 0 100px rgba(8, 145, 178, 0.2);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(0%) rotate(0deg);
+  }
+  25% {
+    transform: translateX(5%) rotate(1deg);
+  }
+  50% {
+    transform: translateX(-5%) rotate(0deg);
+  }
+  75% {
+    transform: translateX(3%) rotate(-1deg);
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -113,4 +267,74 @@
 
 .pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.wave-animation {
+  animation: wave 8s ease-in-out infinite;
+}
+
+.slide-in-up {
+  animation: slide-in-up 0.6s ease-out forwards;
+}
+
+.slide-in-left {
+  animation: slide-in-left 0.6s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slide-in-right 0.6s ease-out forwards;
+}
+
+/* SCROLL EFFECTS */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* RESPONSIVE ENHANCEMENTS */
+@media (max-width: 768px) {
+  .tummim-heading {
+    @apply text-4xl;
+  }
+  
+  .tummim-subheading {
+    @apply text-lg;
+  }
+  
+  .insight-card {
+    @apply p-6;
+  }
+  
+  .btn-primary, .btn-secondary {
+    @apply px-6 py-3 text-base;
+  }
+}
+
+/* ACCESSIBILITY IMPROVEMENTS */
+@media (prefers-reduced-motion: reduce) {
+  .float-animation,
+  .pulse-glow,
+  .wave-animation {
+    animation: none;
+  }
+  
+  .hover-lift {
+    @apply hover:scale-100;
+  }
+}
+
+/* HIGH CONTRAST MODE */
+@media (prefers-contrast: high) {
+  .glass-card {
+    @apply bg-white border-gray-300;
+    backdrop-filter: none;
+  }
+  
+  .tag-pill {
+    @apply border border-current;
+  }
+}
+
+/* DARK MODE PREPARATION */
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles here when needed */
 }
