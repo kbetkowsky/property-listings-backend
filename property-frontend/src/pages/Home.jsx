@@ -4,7 +4,7 @@ import PropertyModal from '../components/PropertyModal';
 import AddPropertyForm from '../components/AddPropertyForm';
 import FiltersBar from '../components/FiltersBar';
 import { propertyAPI } from '../services/api';
-import { Home as HomeIcon, Search, Plus, MapPin, Users } from 'lucide-react';
+import { Home as HomeIcon, Search, Plus, MapPin, Users, Building, Key, TrendingUp } from 'lucide-react';
 
 const Home = () => {
   const [properties, setProperties] = useState([]);
@@ -128,42 +128,154 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       
-      {/* TUMMIM-STYLE HERO SECTION */}
-      <section className="tummim-hero relative h-screen overflow-hidden">
-        {/* Animated Ocean Elements */}
+      {/* MODERN HERO SECTION WITH ANIMATED BUILDINGS */}
+      <section className="modern-hero relative h-screen overflow-hidden">
+        {/* Animated 3D Buildings Background */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-white bg-opacity-10 rounded-full blur-3xl float-animation"></div>
-          <div className="absolute bottom-20 right-20 w-72 h-72 bg-accent-300 bg-opacity-20 rounded-full blur-2xl float-animation" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-secondary-400 bg-opacity-20 rounded-full blur-3xl pulse-glow"></div>
+          {/* City Skyline - Animated Buildings */}
+          <div className="absolute bottom-0 left-0 w-full h-2/3">
+            {/* Background Buildings Layer */}
+            <div className="absolute bottom-0 left-0 w-full h-full opacity-20">
+              {Array.from({ length: 15 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute bottom-0 bg-white"
+                  style={{
+                    left: `${i * 7}%`,
+                    width: `${4 + Math.random() * 3}%`,
+                    height: `${30 + Math.random() * 40}%`,
+                    animationDelay: `${i * 0.2}s`,
+                    transform: `translateY(${Math.sin(i) * 10}px)`
+                  }}
+                >
+                  {/* Building windows */}
+                  <div className="w-full h-full grid grid-cols-2 gap-1 p-1">
+                    {Array.from({ length: 8 }).map((_, j) => (
+                      <div
+                        key={j}
+                        className={`bg-accent-300 rounded-sm ${
+                          Math.random() > 0.3 ? 'animate-pulse' : ''
+                        }`}
+                        style={{ animationDelay: `${j * 0.5}s` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Foreground Buildings Layer */}
+            <div className="absolute bottom-0 left-0 w-full h-full opacity-30">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={`fg-${i}`}
+                  className="absolute bottom-0 bg-white building-rise"
+                  style={{
+                    left: `${i * 12 + 5}%`,
+                    width: `${6 + Math.random() * 4}%`,
+                    height: `${50 + Math.random() * 30}%`,
+                    animationDelay: `${i * 0.3}s`
+                  }}
+                >
+                  {/* Modern building details */}
+                  <div className="w-full h-full relative">
+                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-3/4 h-1 bg-primary-300 rounded"></div>
+                    <div className="w-full h-full grid grid-cols-3 gap-1 p-2 pt-4">
+                      {Array.from({ length: 12 }).map((_, j) => (
+                        <div
+                          key={j}
+                          className={`bg-accent-400 rounded-sm window-glow ${
+                            Math.random() > 0.4 ? 'animate-pulse' : ''
+                          }`}
+                          style={{ animationDelay: `${j * 0.3}s` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Floating Property Icons */}
+          <div className="absolute inset-0">
+            <div className="absolute top-20 left-10 property-float" style={{ animationDelay: '0s' }}>
+              <div className="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm">
+                <Building className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            
+            <div className="absolute top-40 right-20 property-float" style={{ animationDelay: '1s' }}>
+              <div className="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm">
+                <Key className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            
+            <div className="absolute top-60 left-1/3 property-float" style={{ animationDelay: '2s' }}>
+              <div className="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm">
+                <TrendingUp className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            
+            <div className="absolute top-32 right-1/3 property-float" style={{ animationDelay: '3s' }}>
+              <div className="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm">
+                <HomeIcon className="h-8 w-8 text-white" />
+              </div>
+            </div>
+          </div>
+          
+          {/* Animated Particles */}
+          <div className="absolute inset-0 overflow-hidden">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div
+                key={`particle-${i}`}
+                className="absolute w-1 h-1 bg-white rounded-full opacity-60 particle-drift"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 10}s`,
+                  animationDuration: `${10 + Math.random() * 20}s`
+                }}
+              />
+            ))}
+          </div>
         </div>
         
         <div className="relative z-10 flex items-center justify-center h-full">
           <div className="text-center text-white max-w-6xl px-8">
-            <h1 className="tummim-heading text-6xl md:text-8xl mb-6 leading-none">
+            <h1 className="tummim-heading text-6xl md:text-8xl mb-6 leading-none slide-in-up">
               COMBINING INNOVATION
             </h1>
-            <h1 className="tummim-heading text-6xl md:text-8xl mb-8 leading-none">
+            <h1 className="tummim-heading text-6xl md:text-8xl mb-8 leading-none slide-in-up" style={{ animationDelay: '0.3s' }}>
               WITH THE POWER OF HOMES
             </h1>
             
             {/* Tummim signature dot */}
-            <div className="tummim-dot mx-auto mb-8"></div>
+            <div className="tummim-dot mx-auto mb-8 pulse-glow" style={{ animationDelay: '0.6s' }}></div>
             
-            <p className="tummim-subheading text-xl md:text-2xl opacity-90 mb-8 max-w-4xl mx-auto">
+            <p className="tummim-subheading text-xl md:text-2xl opacity-90 mb-8 max-w-4xl mx-auto slide-in-up" style={{ animationDelay: '0.9s' }}>
               <strong>Strengthening families</strong> through the automation of key real estate processes.
             </p>
             
-            <p className="tummim-body text-lg opacity-80 max-w-3xl mx-auto mb-16 leading-relaxed">
+            <p className="tummim-body text-lg opacity-80 max-w-3xl mx-auto mb-16 leading-relaxed slide-in-up" style={{ animationDelay: '1.2s' }}>
               We automate manual property search, eliminating delays and errors. The lack of digitization limits home finding efficiency – we are changing that.
             </p>
             
             {/* Tummim-style CTA */}
             <button 
               onClick={() => document.getElementById('properties').scrollIntoView({ behavior: 'smooth' })}
-              className="glass-card px-12 py-6 text-xl font-light text-white hover:bg-white hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105"
+              className="glass-card px-12 py-6 text-xl font-light text-white hover:bg-white hover:bg-opacity-20 transition-all duration-300 transform hover:scale-105 slide-in-up"
+              style={{ animationDelay: '1.5s' }}
             >
               Explore Properties
             </button>
+          </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white opacity-60">
+          <div className="scroll-indicator">
+            <div className="scroll-dot"></div>
           </div>
         </div>
       </section>
