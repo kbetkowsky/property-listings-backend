@@ -1,4 +1,4 @@
-package com.realestate.propertylistings.config;
+package com.realestate.propertylistings.exception;
 
 import com.realestate.propertylistings.dto.ErrorResponse;
 import com.realestate.propertylistings.dto.ValidationErrorResponse;
@@ -11,6 +11,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -22,9 +28,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Obsługa błędów walidacji dla @Valid w kontrolerach
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -48,9 +51,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    /**
-     * Obsługa błędów walidacji dla constraintów na poziomie serwisu
-     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ValidationErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
@@ -76,9 +76,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    /**
-     * Obsługa błędu "nie znaleziono encji"
-     */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFound(
             EntityNotFoundException ex, WebRequest request) {
@@ -96,9 +93,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.notFound().build();
     }
 
-    /**
-     * Obsługa błędów IllegalArgumentException
-     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(
             IllegalArgumentException ex, WebRequest request) {
@@ -116,9 +110,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    /**
-     * Obsługa wszystkich innych błędów
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
@@ -145,7 +136,6 @@ public class GlobalExceptionHandler {
 
         String userMessage = "Nieprawidłowy format danych";
 
-        // Konkretne błędy
         String exceptionMessage = ex.getMessage();
         if (exceptionMessage.contains("out of range of int")) {
             userMessage = "Podana liczba jest za duża. Maksymalnie: 2,147,483,647";
@@ -155,7 +145,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(400)  // ← Kluczowe: 400 zamiast 500!
+                .status(400)
                 .error("Bad Request")
                 .message(userMessage)
                 .path(request.getRequestURI())
@@ -164,6 +154,90 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(error);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            BadCredentialsException ex, WebRequest request) {
+
+        log.warn("Nieprawidłowe dane logowania: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Unauthorized")
+                .message("Nieprawidłowy email lub hasło")
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(
+            ExpiredJwtException ex, WebRequest request) {
+
+        log.warn("Token wygasł: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Token Expired")
+                .message("Token wygasł. Zaloguj się ponownie.")
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler({MalformedJwtException.class, UnsupportedJwtException.class, SecurityException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidJwt(
+            Exception ex, WebRequest request) {
+
+        log.warn("Nieprawidłowy token: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Invalid Token")
+                .message("Nieprawidłowy token")
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex, WebRequest request) {
+
+        log.warn("Brak uprawnień: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Access Denied")
+                .message("Brak uprawnień do tego zasobu")
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(
+            AuthenticationException ex, WebRequest request) {
+
+        log.warn("Błąd autentykacji: {}", ex.getMessage());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("Authentication Failed")
+                .message("Błąd autentykacji")
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
 
     private String getPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
