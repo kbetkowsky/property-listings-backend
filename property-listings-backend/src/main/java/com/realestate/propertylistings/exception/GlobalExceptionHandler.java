@@ -239,6 +239,41 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
+    @ExceptionHandler(PropertyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePropertyNotFound(
+            PropertyNotFoundException ex, WebRequest request) {
+
+        log.warn("Property not found: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(404)
+                .error("Not Found")
+                .message(ex.getMessage())
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(404).body(error);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(
+            UnauthorizedException ex, WebRequest request) {
+
+        log.warn("Unauthorized access: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(403)
+                .error("Forbidden")
+                .message(ex.getMessage())
+                .path(getPath(request))
+                .build();
+
+        return ResponseEntity.status(403).body(error);
+    }
+
+
     private String getPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");
     }

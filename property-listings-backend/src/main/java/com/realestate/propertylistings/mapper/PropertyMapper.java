@@ -1,66 +1,74 @@
 package com.realestate.propertylistings.mapper;
 
 import com.realestate.propertylistings.dto.CreatePropertyRequest;
-import com.realestate.propertylistings.dto.PropertyImageRequest;
-import com.realestate.propertylistings.dto.PropertyImageResponse;
 import com.realestate.propertylistings.dto.PropertyResponse;
-import com.realestate.propertylistings.image.PropertyImage;
+import com.realestate.propertylistings.dto.UpdatePropertyRequest;
 import com.realestate.propertylistings.property.Property;
+import com.realestate.propertylistings.user.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class PropertyMapper {
-    public static Property mapToEntity(CreatePropertyRequest request) {
+
+    private final PropertyImageMapper imageMapper;  // Oddzielny mapper dla images
+
+    public Property toEntity(CreatePropertyRequest request, User owner) {
         Property property = new Property();
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
         property.setPrice(request.getPrice());
         property.setCity(request.getCity());
+        property.setOwner(owner);
+        property.setCreatedAt(LocalDateTime.now());
+        property.setUpdatedAt(LocalDateTime.now());
 
-        if (request.getImages() != null) {
-            List<PropertyImage> images = request.getImages().stream()
-                    .map(PropertyMapper::mapToImageEntity)
-                    .collect(Collectors.toList());
-            images.forEach(img -> img.setProperty(property));
-            property.setImages(images);
-        }
         return property;
     }
 
-    public static PropertyImage mapToImageEntity(PropertyImageRequest req) {
-        PropertyImage img = new PropertyImage();
-        img.setImageUrl(req.getImageUrl());
-        img.setDisplayOrder(req.getDisplayOrder());
-        img.setOriginalFileName(req.getOriginalFileName());
-        img.setContentType(req.getContentType());
-        return img;
+    public void updateEntity(Property existing, UpdatePropertyRequest request) {
+        existing.setTitle(request.getTitle());
+        existing.setDescription(request.getDescription());
+        existing.setPrice(request.getPrice());
+        existing.setCity(request.getCity());
+        existing.setUpdatedAt(LocalDateTime.now());
+
     }
 
-    public static PropertyResponse mapToResponse(Property property) {
+    public PropertyResponse toResponse(Property property) {
         PropertyResponse response = new PropertyResponse();
         response.setId(property.getId());
         response.setTitle(property.getTitle());
         response.setDescription(property.getDescription());
         response.setPrice(property.getPrice());
         response.setCity(property.getCity());
+        response.setCreatedAt(property.getCreatedAt());
+        response.setUpdatedAt(property.getUpdatedAt());
 
-        if(property.getImages() != null) {
-            List<PropertyImageResponse> images = property.getImages().stream()
-                    .map(PropertyMapper::mapToImageResponse)
-                    .collect(Collectors.toList());
-            response.setImages(images);
+        // Owner info
+        if (property.getOwner() != null) {
+            response.setOwnerEmail(property.getOwner().getEmail());
+            response.setOwnerName(property.getOwner().getFirstName() + " " + property.getOwner().getLastName());
         }
+
+        // Images
+        if (property.getImages() != null) {
+            response.setImages(property.getImages().stream()
+                    .map(imageMapper::toResponse)
+                    .collect(Collectors.toList()));
+        }
+
         return response;
     }
 
-    public static PropertyImageResponse mapToImageResponse(PropertyImage img) {
-        PropertyImageResponse resp = new PropertyImageResponse();
-        resp.setId(img.getId());
-        resp.setImageUrl(img.getImageUrl());
-        resp.setOriginalFileName(img.getOriginalFileName());
-        resp.setContentType(img.getContentType());
-        resp.setDisplayOrder(img.getDisplayOrder());
-        return resp;
+    public List<PropertyResponse> toResponseList(List<Property> properties) {
+        return properties.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 }
