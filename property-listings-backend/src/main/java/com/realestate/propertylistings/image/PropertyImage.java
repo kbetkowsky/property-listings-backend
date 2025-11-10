@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.realestate.propertylistings.property.Property;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "property_images")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PropertyImage {
@@ -34,4 +36,7 @@ public class PropertyImage {
     @JoinColumn(name = "property_id", nullable = false)
     @JsonIgnore
     private Property property;
+
+    @Column(name = "file_size")
+    private Long fileSize;
 }
