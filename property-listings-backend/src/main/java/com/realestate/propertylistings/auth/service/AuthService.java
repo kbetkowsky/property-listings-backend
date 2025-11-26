@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,26 +51,14 @@ public class AuthService {
         userRepository.save(user);
         log.info("Użytkownik zarejestrowany: {} z rolą {}", user.getEmail(), user.getRole());
 
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .refreshToken(refreshToken)
-                .type("Bearer")
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .role(user.getRole().name())
-                .expiresIn(jwtService.getExpirationTime() / 1000)
-                .build();
+        return buildAuthResponse(user);
     }
 
     public AuthResponse authenticate(LoginRequest request) {
         log.info("Próba logowania użytkownika: {}", request.getEmail());
 
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
                             request.getPassword()
@@ -85,22 +72,13 @@ public class AuthService {
                 throw new RuntimeException("Konto nieaktywne. Skontaktuj się z administratorem.");
             }
 
-            String jwtToken = jwtService.generateToken(user);
-            String refreshToken = jwtService.generateRefreshToken(user);
-
             log.info("Użytkownik zalogowany: {} z rolą {}", user.getEmail(), user.getRole());
 
-            return AuthResponse.builder()
-                    .token(jwtToken)
-                    .refreshToken(refreshToken)
-                    .type("Bearer")
-                    .email(user.getEmail())
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .role(user.getRole().name())
-                    .expiresIn(jwtService.getExpirationTime() / 1000)
-                    .build();
+            return buildAuthResponse(user);
 
+        } catch (BadCredentialsException e) {
+            log.error("Błąd logowania dla użytkownika {}: {}", request.getEmail(), e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Błąd logowania dla użytkownika {}: {}", request.getEmail(), e.getMessage());
             throw new BadCredentialsException("Nieprawidłowy email lub hasło");
@@ -113,27 +91,34 @@ public class AuthService {
             User user = userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("Użytkownik nie znaleziony"));
 
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                String newJwtToken = jwtService.generateToken(user);
-                String newRefreshToken = jwtService.generateRefreshToken(user);
-
-                return AuthResponse.builder()
-                        .token(newJwtToken)
-                        .refreshToken(newRefreshToken)
-                        .type("Bearer")
-                        .email(user.getEmail())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .role(user.getRole().name())
-                        .expiresIn(jwtService.getExpirationTime() / 1000)
-                        .build();
-            } else {
-                throw new RuntimeException("Refresh token nieprawidłowy");
+            if (!jwtService.isTokenValid(refreshToken, user)) {
+                throw new RuntimeException("Refresh token nieprawidłowy lub wygasły");
             }
+
+            log.info("Token odświeżony dla użytkownika: {}", user.getEmail());
+
+            return buildAuthResponse(user);
+
         } catch (Exception e) {
             log.error("Błąd odświeżania tokenu: {}", e.getMessage());
-            throw new RuntimeException("Nie można odświeżyć tokenu");
+            throw new RuntimeException("Nie można odświeżyć tokenu: " + e.getMessage());
         }
+    }
+
+    private AuthResponse buildAuthResponse(User user) {
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        return AuthResponse.builder()
+                .token(jwtToken)
+                .refreshToken(refreshToken)
+                .type("Bearer")
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .role(user.getRole().name())
+                .expiresIn(jwtService.getExpirationTime() / 1000)
+                .build();
     }
 }
 

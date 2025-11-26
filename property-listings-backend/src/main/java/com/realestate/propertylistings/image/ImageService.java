@@ -67,7 +67,7 @@ public class ImageService {
 
         PropertyImage image = PropertyImage.builder()
                 .property(property)
-                .imageUrl(imageUrl)
+                .fileUrl()
                 .originalFileName(file.getOriginalFilename())
                 .contentType(file.getContentType())
                 .displayOrder(displayOrder != null ? displayOrder : 0)
