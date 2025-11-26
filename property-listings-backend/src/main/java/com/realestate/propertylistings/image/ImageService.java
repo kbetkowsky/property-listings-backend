@@ -29,7 +29,7 @@ import java.util.UUID;
 @Transactional
 public class ImageService {
 
-    private static final long MAX_SIZE_BYTES = 5_242_880;  // 5 MB
+    private static final long MAX_SIZE_BYTES = 5_242_880;
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
             "image/jpg",
@@ -67,11 +67,13 @@ public class ImageService {
 
         PropertyImage image = PropertyImage.builder()
                 .property(property)
-                .fileUrl()
+                .fileName(fileName)
+                .fileUrl(imageUrl)
                 .originalFileName(file.getOriginalFilename())
                 .contentType(file.getContentType())
                 .displayOrder(displayOrder != null ? displayOrder : 0)
                 .fileSize(file.getSize())
+                .isPrimary(false)
                 .build();
 
         PropertyImage saved = imageRepository.save(image);
@@ -79,7 +81,7 @@ public class ImageService {
 
         return ImageUploadResponse.builder()
                 .id(saved.getId())
-                .imageUrl(saved.getImageUrl())
+                .imageUrl(saved.getFileUrl())  // ✅ Zmień getImageUrl() na getFileUrl()
                 .originalFileName(saved.getOriginalFileName())
                 .contentType(saved.getContentType())
                 .displayOrder(saved.getDisplayOrder())
@@ -109,7 +111,7 @@ public class ImageService {
             throw new UnauthorizedException("Brak uprawnień do usunięcia zdjęcia");
         }
 
-        deleteFileFromDisk(image.getImageUrl());
+        deleteFileFromDisk(image.getFileUrl());
 
         imageRepository.delete(image);
         log.info("Zdjęcie usunięte: id={}", imageId);
