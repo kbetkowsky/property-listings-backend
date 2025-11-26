@@ -2,11 +2,9 @@ package com.realestate.propertylistings.property;
 
 import com.realestate.propertylistings.dto.CreatePropertyRequest;
 import com.realestate.propertylistings.dto.PagedResponse;
-import com.realestate.propertylistings.dto.PropertyResponse;
 import com.realestate.propertylistings.dto.UpdatePropertyRequest;
 import com.realestate.propertylistings.exception.PropertyNotFoundException;
 import com.realestate.propertylistings.exception.UnauthorizedException;
-import com.realestate.propertylistings.mapper.PropertyMapper;
 import com.realestate.propertylistings.user.User;
 import com.realestate.propertylistings.user.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +32,8 @@ public class PropertyService {
     public PropertyResponse createProperty(CreatePropertyRequest request, User currentUser) {
         log.info("Tworzenie ogłoszenia przez: {}", currentUser.getEmail());
 
-        Property property = propertyMapper.toEntity(request, currentUser);
+        Property property = propertyMapper.toEntity(request);
+        property.setOwner(currentUser);
         Property saved = propertyRepository.save(property);
 
         log.info("Ogłoszenie utworzone: id={}", saved.getId());

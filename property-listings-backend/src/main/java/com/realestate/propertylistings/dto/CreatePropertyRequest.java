@@ -1,6 +1,6 @@
 package com.realestate.propertylistings.dto;
 
-import com.realestate.propertylistings.property.PropertyType;
+import com.realestate.propertylistings.property.TransactionType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class CreatePropertyRequest {
     private Integer floorNumber;
 
     @NotNull(message = "Typ nieruchomości jest wymagany")
-    private PropertyType propertyType;
+    private TransactionType transactionType;
 
     @NotBlank(message = "Miasto jest wymagane")
     @Size(max = 100, message = "Nazwa miasta nie może być dłuższa niż 100 znaków")

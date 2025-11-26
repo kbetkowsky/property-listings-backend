@@ -25,7 +25,7 @@ public class PropertyDTO {
     private Long price;
 
     @NotNull(message = "Typ nieruchomości jest wymagany")
-    private PropertyType type;
+    private TransactionType type;
 
     @NotBlank(message = "Adres jest wymagany")
     private String address;

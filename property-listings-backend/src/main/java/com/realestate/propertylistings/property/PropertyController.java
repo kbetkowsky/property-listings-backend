@@ -2,7 +2,6 @@ package com.realestate.propertylistings.property;
 
 import com.realestate.propertylistings.dto.CreatePropertyRequest;
 import com.realestate.propertylistings.dto.PagedResponse;
-import com.realestate.propertylistings.dto.PropertyResponse;
 import com.realestate.propertylistings.dto.UpdatePropertyRequest;
 import com.realestate.propertylistings.user.User;
 import jakarta.validation.Valid;

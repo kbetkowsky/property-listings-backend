@@ -33,10 +33,8 @@ public class Property {
 
     private Double areaSqm;
     private Integer roomCount;
+    private Integer bathroomCount;
     private Integer floorNumber;
-
-    @Enumerated(EnumType.STRING)
-    private PropertyType propertyType;
 
     @Column(length = 100)
     private String city;
@@ -45,6 +43,13 @@ public class Property {
     private String street;
 
     private String postalCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type")
+    private TransactionType transactionType;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

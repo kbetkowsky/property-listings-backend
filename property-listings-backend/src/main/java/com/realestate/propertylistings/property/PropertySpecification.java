@@ -69,6 +69,11 @@ public class PropertySpecification {
                 ));
             }
 
+            if (filters.getTransactionType() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("transactionType"), filters.getTransactionType()));
+            }
+
+
             if (filters.getSearch() != null && !filters.getSearch().isEmpty()) {
                 String searchPattern = "%" + filters.getSearch().toLowerCase() + "%";
 

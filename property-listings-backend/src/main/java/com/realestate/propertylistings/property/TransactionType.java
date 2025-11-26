@@ -1,6 +1,6 @@
 package com.realestate.propertylistings.property;
 
-public enum PropertyType {
+public enum TransactionType {
     SALE,
     RENT
 }

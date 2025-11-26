@@ -18,7 +18,7 @@ public class PropertyResponse {
     private String title;
     private String description;
     private BigDecimal price;
-    private PropertyType type;
+    private TransactionType type;
     private String city;
     private String address;
     private Double area;
