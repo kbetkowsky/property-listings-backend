@@ -22,7 +22,7 @@ public interface PropertyMapper {
     @Mapping(target = "images", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "propertyType", ignore = true)
+    @Mapping(target = "transactionType", ignore = true)
     @Mapping(target = "areaSqm", ignore = true)
     @Mapping(target = "roomCount", ignore = true)
     @Mapping(target = "bathroomCount", ignore = true)
@@ -33,7 +33,7 @@ public interface PropertyMapper {
     @Mapping(target = "price", source = "price")
     void updateEntity(@MappingTarget Property property, UpdatePropertyRequest request);
 
-    @Mapping(target = "type", source = "propertyType")
+    @Mapping(target = "type", source = "transactionType")
     @Mapping(target = "area", source = "areaSqm")
     @Mapping(target = "rooms", source = "roomCount")
     @Mapping(target = "bathrooms", source = "bathroomCount")

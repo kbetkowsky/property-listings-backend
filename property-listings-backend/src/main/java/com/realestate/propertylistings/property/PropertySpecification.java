@@ -24,7 +24,7 @@ public class PropertySpecification {
             }
 
             if (filters.getType() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("type"), filters.getType()));
+                predicates.add(criteriaBuilder.equal(root.get("transactionType"), filters.getType()));  // ZMIENIONE!
             }
 
             if (filters.getMinPrice() != null) {
@@ -43,36 +43,31 @@ public class PropertySpecification {
 
             if (filters.getMinArea() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("area"),
+                        root.get("areaSqm"),  // ZMIENIONE z "area"!
                         filters.getMinArea()
                 ));
             }
 
             if (filters.getMaxArea() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                        root.get("area"),
+                        root.get("areaSqm"),  // ZMIENIONE z "area"!
                         filters.getMaxArea()
                 ));
             }
 
             if (filters.getMinRooms() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("rooms"),
+                        root.get("roomCount"),  // ZMIENIONE z "rooms"!
                         filters.getMinRooms()
                 ));
             }
 
             if (filters.getMaxRooms() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                        root.get("rooms"),
+                        root.get("roomCount"),  // ZMIENIONE z "rooms"!
                         filters.getMaxRooms()
                 ));
             }
-
-            if (filters.getTransactionType() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("transactionType"), filters.getTransactionType()));
-            }
-
 
             if (filters.getSearch() != null && !filters.getSearch().isEmpty()) {
                 String searchPattern = "%" + filters.getSearch().toLowerCase() + "%";
