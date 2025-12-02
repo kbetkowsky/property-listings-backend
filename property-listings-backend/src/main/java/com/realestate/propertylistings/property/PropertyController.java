@@ -6,10 +6,13 @@ import com.realestate.propertylistings.dto.UpdatePropertyRequest;
 import com.realestate.propertylistings.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/properties")
@@ -125,5 +128,53 @@ public class PropertyController {
                 userId, page, size
         );
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<PropertyResponse>> filterProperties(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Double minArea,
+            @RequestParam(required = false) Double maxArea,
+            @RequestParam(required = false) Integer minRooms,
+            @RequestParam(required = false) Integer maxRooms,
+            @RequestParam(required = false) Integer minBathrooms,
+            @RequestParam(required = false) Integer maxBathrooms,
+            @RequestParam(required = false) Integer minFloor,
+            @RequestParam(required = false) Integer maxFloor,
+            @RequestParam(required = false) String street,
+            @RequestParam(required = false) String postalCode,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "true") Boolean activeOnly,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer size
+    ) {
+        PropertyFilterRequest filters = new PropertyFilterRequest();
+        filters.setCity(city);
+        filters.setType(type);
+        filters.setMinPrice(minPrice);
+        filters.setMaxPrice(maxPrice);
+        filters.setMinArea(minArea);
+        filters.setMaxArea(maxArea);
+        filters.setMinRooms(minRooms);
+        filters.setMaxRooms(maxRooms);
+        filters.setMinBathroom(minBathrooms);
+        filters.setMaxBathroom(maxBathrooms);
+        filters.setMinFloor(minFloor);
+        filters.setMaxFloor(maxFloor);
+        filters.setStreet(street);
+        filters.setPostalCode(postalCode);
+        filters.setSearch(search);
+        filters.setActiveOnly(activeOnly);
+        filters.setSortBy(sortBy);
+        filters.setSortDirection(sortDirection);
+        filters.setPage(page);
+        filters.setSize(size);
+
+        return ResponseEntity.ok(propertyService.filterProperties(filters));
     }
 }

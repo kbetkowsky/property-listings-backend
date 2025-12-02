@@ -43,29 +43,64 @@ public class PropertySpecification {
 
             if (filters.getMinArea() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("areaSqm"),  // ZMIENIONE z "area"!
+                        root.get("areaSqm"),
                         filters.getMinArea()
                 ));
             }
 
             if (filters.getMaxArea() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                        root.get("areaSqm"),  // ZMIENIONE z "area"!
+                        root.get("areaSqm"),
                         filters.getMaxArea()
                 ));
             }
 
             if (filters.getMinRooms() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("roomCount"),  // ZMIENIONE z "rooms"!
+                        root.get("roomCount"),
                         filters.getMinRooms()
                 ));
             }
 
             if (filters.getMaxRooms() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                        root.get("roomCount"),  // ZMIENIONE z "rooms"!
+                        root.get("roomCount"),
                         filters.getMaxRooms()
+                ));
+            }
+
+            if (filters.getMinFloor() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("bathroomCount"), filters.getMinBathroom()));
+            }
+
+            if (filters.getMaxFloor() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                        root.get("floorNumber"), filters.getMaxFloor()
+                ));
+            }
+
+            if (filters.getMinBathroom() != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("bathroomCount"), filters.getMinBathroom()
+                ));
+            }
+
+            if (filters.getMinBathroom() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                        root.get("bathroomCount"), filters.getMaxBathroom()
+                ));
+            }
+
+            if (filters.getStreet() != null && !filters.getStreet().isEmpty()) {
+                predicates.add(criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("street")),
+                        "%" + filters.getStreet().toLowerCase() + "%"
+                ));
+            }
+
+            if (filters.getPostalCode() != null && !filters.getPostalCode().isEmpty()) {
+                predicates.add(criteriaBuilder.equal(
+                        root.get("postalCode"), filters.getPostalCode()
                 ));
             }
 
@@ -82,7 +117,11 @@ public class PropertySpecification {
                         searchPattern
                 );
 
-                predicates.add(criteriaBuilder.or(titleMatch, descriptionMatch));
+                Predicate cityMatch = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("city")), searchPattern
+                );
+
+                predicates.add(criteriaBuilder.or(titleMatch, descriptionMatch, cityMatch));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

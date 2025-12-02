@@ -174,6 +174,25 @@ public class PropertyService {
         return getUserProperties(currentUser.getId(), page, size);
     }
 
+    public Page<PropertyResponse> filterProperties(PropertyFilterRequest filters) {
+        Specification<Property> spec = PropertySpecification.withFilters(filters);
+
+        Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        Sort sort = Sort.by(direction, filters.getSortBy());
+
+        Pageable pageable = PageRequest.of(
+                filters.getPage(),
+                filters.getSize(),
+                sort
+        );
+
+        Page<Property> properties = propertyRepository.findAll(spec, pageable);
+        return properties.map(propertyMapper::toResponse);
+    }
+
     private boolean canModifyProperty(Property property, User user) {
         boolean isOwner = property.getOwner().getId().equals(user.getId());
         boolean isAdmin = user.getRole() == UserRole.ADMIN;
