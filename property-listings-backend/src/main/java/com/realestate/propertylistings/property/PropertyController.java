@@ -36,7 +36,7 @@ public class PropertyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PropertyResponse> getPropertyById(@PathVariable Long id) {
-        PropertyResponse response = propertyService.getPropertyById(id);
+        PropertyResponse response = propertyService.getPropertyByIdOptimized(id);
         return ResponseEntity.ok(response);
     }
 

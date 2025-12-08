@@ -24,7 +24,7 @@ public class PropertySpecification {
             }
 
             if (filters.getType() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("transactionType"), filters.getType()));  // ZMIENIONE!
+                predicates.add(criteriaBuilder.equal(root.get("transactionType"), filters.getType()));
             }
 
             if (filters.getMinPrice() != null) {
@@ -70,7 +70,9 @@ public class PropertySpecification {
             }
 
             if (filters.getMinFloor() != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("bathroomCount"), filters.getMinBathroom()));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("floorNumber"), filters.getMinFloor()
+                ));
             }
 
             if (filters.getMaxFloor() != null) {
@@ -82,12 +84,6 @@ public class PropertySpecification {
             if (filters.getMinBathroom() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(
                         root.get("bathroomCount"), filters.getMinBathroom()
-                ));
-            }
-
-            if (filters.getMinBathroom() != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                        root.get("bathroomCount"), filters.getMaxBathroom()
                 ));
             }
 

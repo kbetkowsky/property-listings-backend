@@ -28,6 +28,7 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final PropertyMapper propertyMapper;
+    private final PaginationValidator paginationValidator;
 
     public PropertyResponse createProperty(CreatePropertyRequest request, User currentUser) {
         log.info("Tworzenie ogłoszenia przez: {}", currentUser.getEmail());
@@ -76,8 +77,10 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public PropertyResponse getPropertyById(Long id) {
-        Property property = propertyRepository.findById(id)
+    public PropertyResponse getPropertyByIdOptimized(Long id) {
+        log.info("Pobieranie ogłoszenia id={} z relacjami", id);
+
+        Property property = propertyRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Ogłoszenie nie znalezione: " + id));
 
         return propertyMapper.toResponse(property);
@@ -174,7 +177,15 @@ public class PropertyService {
         return getUserProperties(currentUser.getId(), page, size);
     }
 
+
+
     public Page<PropertyResponse> filterProperties(PropertyFilterRequest filters) {
+
+        log.info("Filtrowanie ogłoszeń z parametrami: {}", filters);
+        filters.setSize(paginationValidator.validatePageSize(filters.getSize()));
+        filters.setPage(paginationValidator.validatePageNumber(filters.getPage()));
+        filters.setSortBy(paginationValidator.validateSortField(filters.getSortBy()));
+
         Specification<Property> spec = PropertySpecification.withFilters(filters);
 
         Sort.Direction direction = filters.getSortDirection().equalsIgnoreCase("ASC")
@@ -190,6 +201,12 @@ public class PropertyService {
         );
 
         Page<Property> properties = propertyRepository.findAll(spec, pageable);
+
+        log.info("Znaleziono {} ogłoszeń, strona {}/{}",
+                properties.getTotalElements(),
+                properties.getNumber() + 1,
+                properties.getTotalPages());
+
         return properties.map(propertyMapper::toResponse);
     }
 

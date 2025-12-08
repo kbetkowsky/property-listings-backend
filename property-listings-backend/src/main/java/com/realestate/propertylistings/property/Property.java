@@ -13,7 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "properties")
+@Table(name = "properties",
+        indexes = {
+                @Index(name = "idx_city", columnList = "city"),
+                @Index(name = "idx_price", columnList = "price"),
+                @Index(name = "idx_transaction_type", columnList = "transaction_type"),
+                @Index(name = "idx_is_active", columnList = "is_active"),
+                @Index(name = "idx_created_at", columnList = "created_at"),
+                @Index(name = "idx_user_id", columnList = "user_id"),
+                @Index(name = "idx_city_price", columnList = "city, price"),
+                @Index(name = "idx_city_active", columnList = "city, is_active"),
+                @Index(name = "idx_active_created", columnList = "is_active, created_at")
+        })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
