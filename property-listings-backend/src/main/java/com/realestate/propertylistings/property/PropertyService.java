@@ -9,6 +9,8 @@ import com.realestate.propertylistings.user.User;
 import com.realestate.propertylistings.user.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,8 @@ public class PropertyService {
         return propertyMapper.toResponse(saved);
     }
 
+    @CacheEvict(value = "propertyCache", key = "#id")
+    @Transactional
     public PropertyResponse updateProperty(Long id, UpdatePropertyRequest request, User currentUser) {
         log.info("Aktualizacja ogłoszenia id={} przez: {}", id, currentUser.getEmail());
 
@@ -60,6 +64,8 @@ public class PropertyService {
         return propertyMapper.toResponse(updated);
     }
 
+    @CacheEvict(value = "propertyCache", key = "#id")
+    @Transactional
     public void deleteProperty(Long id, User currentUser) {
         log.info("Usuwanie ogłoszenia id={} przez: {}", id, currentUser.getEmail());
 
@@ -76,14 +82,21 @@ public class PropertyService {
         log.info("Ogłoszenie usunięte: id={}", id);
     }
 
+    @Cacheable(value = "propertyCache", key = "#id")
     @Transactional(readOnly = true)
     public PropertyResponse getPropertyByIdOptimized(Long id) {
+        long startTime = System.currentTimeMillis();
         log.info("Pobieranie ogłoszenia id={} z relacjami", id);
 
         Property property = propertyRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new PropertyNotFoundException("Ogłoszenie nie znalezione: " + id));
 
-        return propertyMapper.toResponse(property);
+        PropertyResponse result = propertyMapper.toResponse(property);
+        long endTime = System.currentTimeMillis();
+        log.info("Pobieranie id={} zajelo {} ms",
+        id, endTime - startTime);
+
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -181,6 +194,7 @@ public class PropertyService {
 
     public Page<PropertyResponse> filterProperties(PropertyFilterRequest filters) {
 
+        long startTime = System.currentTimeMillis();
         log.info("Filtrowanie ogłoszeń z parametrami: {}", filters);
         filters.setSize(paginationValidator.validatePageSize(filters.getSize()));
         filters.setPage(paginationValidator.validatePageNumber(filters.getPage()));
@@ -201,13 +215,14 @@ public class PropertyService {
         );
 
         Page<Property> properties = propertyRepository.findAll(spec, pageable);
+        Page<PropertyResponse> result = properties.map(propertyMapper::toResponse);
 
-        log.info("Znaleziono {} ogłoszeń, strona {}/{}",
-                properties.getTotalElements(),
-                properties.getNumber() + 1,
-                properties.getTotalPages());
+        long endTime = System.currentTimeMillis();
 
-        return properties.map(propertyMapper::toResponse);
+        log.info("Filtrowanie zajelo {} ms, zwrocono {} wynikow",
+                endTime - startTime, result.getTotalElements());
+
+        return result;
     }
 
     private boolean canModifyProperty(Property property, User user) {
