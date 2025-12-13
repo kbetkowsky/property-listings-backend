@@ -273,6 +273,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(403).body(error);
     }
 
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex) {
+        log.error("Błąd uploadu pliku: {}", ex.getMessage());
+
+        ErrorResponse error = ErrorResponse.builder()
+                .status(400)
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
 
     private String getPath(WebRequest request) {
         return request.getDescription(false).replace("uri=", "");

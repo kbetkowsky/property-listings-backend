@@ -1,6 +1,7 @@
 package com.realestate.propertylistings.image;
 
 import com.realestate.propertylistings.dto.ImageUploadResponse;
+import com.realestate.propertylistings.exception.FileUploadException;
 import com.realestate.propertylistings.exception.PropertyNotFoundException;
 import com.realestate.propertylistings.exception.UnauthorizedException;
 import com.realestate.propertylistings.property.Property;
@@ -139,7 +140,7 @@ public class ImageService {
 
         } catch (IOException e) {
             log.error("Błąd zapisu pliku: {}", e.getMessage(), e);
-            throw new RuntimeException("Nie udało się zapisać pliku: " + e.getMessage());
+            throw new RuntimeException("Nie udało się zapisać pliku: " + e.getMessage(), e);
         }
     }
 
@@ -161,11 +162,11 @@ public class ImageService {
 
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("Plik jest pusty");
+            throw new FileUploadException("Plik jest pusty");
         }
 
         if (file.getSize() > MAX_SIZE_BYTES) {
-            throw new RuntimeException(String.format(
+            throw new FileUploadException(String.format(
                     "Plik jest za duży. Maksymalnie: %.1f MB, otrzymano: %.1f MB",
                     MAX_SIZE_BYTES / 1024.0 / 1024.0,
                     file.getSize() / 1024.0 / 1024.0
@@ -174,7 +175,7 @@ public class ImageService {
 
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_TYPES.contains(contentType.toLowerCase())) {
-            throw new RuntimeException(
+            throw new FileUploadException(
                     "Nieprawidłowy typ pliku. Dozwolone: " + String.join(", ", ALLOWED_TYPES)
             );
         }

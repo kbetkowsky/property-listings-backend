@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,29 @@ public class ImageController {
 
                 ImageUploadResponse response = imageService.uploadImage(propertyId, file, displayOrder, currentUser);
                 return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/batch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
+    public ResponseEntity<List<ImageUploadResponse>> uploadMultipleImages(
+            @PathVariable Long propertyId,
+            @RequestParam("files") List<MultipartFile> files,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        log.info("Upload {} zdjęć dla property_id={} przez user={}", files.size(), propertyId, currentUser.getEmail());
+
+        List<ImageUploadResponse> responses = new ArrayList<>();
+        for (int i = 0; i < files.size(); i++) {
+            ImageUploadResponse response = imageService.uploadImage(
+                    propertyId,
+                    files.get(i),
+                    i,
+                    currentUser
+            );
+            responses.add(response);
+        }
+
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping
