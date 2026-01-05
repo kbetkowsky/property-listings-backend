@@ -116,24 +116,38 @@ export default function HomePage() {
 
 // Property Card Component
 function PropertyCard({ property }: { property: Property }) {
+  // ✅ Sprawdź czy ma zdjęcia
+  const hasImages = property.imageUrls && property.imageUrls.length > 0;
+  const imageUrl = hasImages ? property.imageUrls[0] : null;
+
   return (
     <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer group">
-      {/* Image Placeholder */}
-      <div className="relative h-48 bg-gradient-to-br from-blue-400 to-blue-600 overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Home className="w-16 h-16 text-white opacity-50" />
-        </div>
+      {/* Image - prawdziwe zdjęcie LUB placeholder */}
+      <div className="relative h-48 overflow-hidden">
+        {imageUrl ? (
+          // ✅ PRAWDZIWE ZDJĘCIE
+          <img
+            src={imageUrl}
+            alt={property.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+        ) : (
+          // ❌ PLACEHOLDER (jeśli brak zdjęć)
+          <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+            <Home className="w-16 h-16 text-white opacity-50" />
+          </div>
+        )}
 
         {/* Type Badge */}
         <div className="absolute top-3 left-3">
-          <span className="bg-white px-3 py-1 rounded-full text-xs font-semibold text-blue-600">
+          <span className="bg-white px-3 py-1 rounded-full text-xs font-semibold text-blue-600 shadow-md">
             {property.type === 'SALE' ? 'Sprzedaż' : 'Wynajem'}
           </span>
         </div>
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3">
-          <span className="bg-white px-3 py-1.5 rounded-lg font-bold text-blue-600">
+          <span className="bg-white px-3 py-1.5 rounded-lg font-bold text-blue-600 shadow-md">
             {property.price.toLocaleString('pl-PL')} PLN
           </span>
         </div>
