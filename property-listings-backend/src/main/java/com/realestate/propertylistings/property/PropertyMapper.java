@@ -2,7 +2,12 @@ package com.realestate.propertylistings.property;
 
 import com.realestate.propertylistings.dto.CreatePropertyRequest;
 import com.realestate.propertylistings.dto.UpdatePropertyRequest;
+import com.realestate.propertylistings.image.PropertyImage;
 import org.mapstruct.*;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface PropertyMapper {
@@ -44,9 +49,18 @@ public interface PropertyMapper {
     @Mapping(target = "owner.lastName", source = "owner.lastName")
     @Mapping(target = "owner.email", source = "owner.email")
     @Mapping(target = "owner.phoneNumber", source = "owner.phoneNumber")
-    @Mapping(target = "imageUrls", ignore = true)
+    @Mapping(target = "imageUrls", expression = "java(mapImageUrls(property))")
     PropertyResponse toResponse(Property property);
 
+    default List<String> mapImageUrls(Property property) {
+        if (property.getImages() == null || property.getImages().isEmpty()) {
+            return List.of();
+        }
+        return property.getImages().stream()
+                .sorted(Comparator.comparing(PropertyImage::getDisplayOrder))
+                .map(PropertyImage::getFileUrl)
+                .collect(Collectors.toList());
+    }
     default String buildAddress(Property property) {
         if (property.getStreet() == null && property.getCity() == null) {
             return null;
